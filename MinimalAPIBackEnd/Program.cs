@@ -18,8 +18,6 @@ var app = builder.Build();
 // Use CORS policy
 app.UseCors("AllowClientApp");
 
-// app.MapControllers();
-
 app.MapGet("/api/products", () =>
 {
     return new List<Product>
