@@ -74,7 +74,7 @@ CopilotIntegrationDemo.sln
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/CopilotIntegrationDemo.git
+   git clone https://github.com/jzlpr/CopilotIntegrationDemo.git
    cd CopilotIntegrationDemo
    ```
    ```bash
