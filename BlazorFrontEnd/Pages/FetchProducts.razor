@@ -39,6 +39,8 @@
 
             if (!response.IsSuccessStatusCode)
             {
+                Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                // Handle non-success status codes (e.g., 404, 500)
                 errorMessage = $"Error: Unable to fetch products (Status Code: {response.StatusCode})";
                 return;
             }
@@ -52,19 +54,27 @@
 
             if (products == null)
             {
+                Console.WriteLine("Error: No products found in the response.");
+                // Handle the case where the response is empty or null
                 errorMessage = "Error: No products found in the response.";
             }
         }
         catch (TaskCanceledException)
         {
+            Console.WriteLine("Error: The request timed out.");
+            // Handle timeout exceptions
             errorMessage = "Error: The request timed out. Please try again later.";
         }
         catch (JsonException)
         {
+            Console.WriteLine("Error: Failed to parse the product data.");
+            // Handle JSON parsing exceptions
             errorMessage = "Error: Failed to parse the product data.";
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Error: An unexpected error occurred - {ex.Message}");
+            // Handle any other exceptions that may occur
             errorMessage = $"Error: An unexpected error occurred - {ex.Message}";
         }
     }
