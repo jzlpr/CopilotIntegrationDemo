@@ -13,7 +13,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Register an HttpClient service with a base address set to the host environment's base URI
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5035/") });
-// builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 // Register the ProductService as a scoped service for dependency injection
 builder.Services.AddScoped<ProductService>();

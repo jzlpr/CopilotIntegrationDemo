@@ -4,28 +4,38 @@
 
 <h3>Product List</h3>
 
-@* TODO: add table instead of product unordered list *@
-<ul>
-    @if (products != null) // Check if the products list is loaded
-    {
-        foreach (var product in products) // Iterate through the products list
-        {
-            // Display product details including name, price, stock, and category
-            <li>@product.Name - $@product.Price (@product.Stock in stock) - Category: @(product.Category?.Name ?? "Unknown")
-            </li>
-        }
-    }
-    else if (errorMessage != null) // Check if there is an error message
-    {
-        // Display the error message
-        <li>@errorMessage</li>
-    }
-    else
-    {
-        // Display a loading message while data is being fetched
-        <li>Loading...</li>
-    }
-</ul>
+@if (products == null && errorMessage == null) // Display a loading message while data is being fetched
+{
+    <div class="alert alert-info">Loading...</div>
+}
+else if (errorMessage != null) // Check if there is an error message
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (products != null) // Check if the products list is loaded
+{
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products) // Iterate through the products list
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>$@product.Price</td>
+                    <td>@product.Stock</td>
+                    <td>@(product.Category?.Name ?? "Unknown")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @* Inject the ProductService to fetch products *@
 @inject ProductService ProductService
