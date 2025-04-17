@@ -25,6 +25,7 @@
 @code {
     private List<Product>? products;
     private string? errorMessage;
+    private bool debugMode = false; // Set to true for debugging
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,11 +42,20 @@
             {
                 Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
                 // Handle non-success status codes (e.g., 404, 500)
-                errorMessage = $"Error: Unable to fetch products (Status Code: {response.StatusCode})";
+                if (debugMode)
+                    errorMessage = $"Error: Unable to fetch products (Status Code: {response.StatusCode})";
                 return;
             }
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(jsonResponse))
+            {
+                Console.WriteLine("Error: Empty response from the server.");
+                // Handle empty response
+                if (debugMode)
+                    errorMessage = "Error: Empty response from the server.";
+                return;
+            }
 
             products = JsonSerializer.Deserialize<List<Product>>(jsonResponse, new JsonSerializerOptions
             {
@@ -55,27 +65,35 @@
             if (products == null)
             {
                 Console.WriteLine("Error: No products found in the response.");
-                // Handle the case where the response is empty or null
-                errorMessage = "Error: No products found in the response.";
+                if (debugMode)
+                    // Handle the case where the response is empty or null
+                    errorMessage = "Error: No products found in the response.";
+                return;
             }
         }
         catch (TaskCanceledException)
         {
             Console.WriteLine("Error: The request timed out.");
             // Handle timeout exceptions
-            errorMessage = "Error: The request timed out. Please try again later.";
+            if (debugMode)
+                errorMessage = "Error: The request timed out. Please try again later.";
+            return;
         }
         catch (JsonException)
         {
             Console.WriteLine("Error: Failed to parse the product data.");
             // Handle JSON parsing exceptions
-            errorMessage = "Error: Failed to parse the product data.";
+            if (debugMode)
+                errorMessage = "Error: Failed to parse the product data.";
+            return;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: An unexpected error occurred - {ex.Message}");
             // Handle any other exceptions that may occur
-            errorMessage = $"Error: An unexpected error occurred - {ex.Message}";
+            if (debugMode)
+                errorMessage = $"Error: An unexpected error occurred - {ex.Message}";
+            return;
         }
     }
 }
