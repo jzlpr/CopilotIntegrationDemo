@@ -4,22 +4,25 @@ var builder = WebApplication.CreateBuilder(args);
 
 var clientUrl = "http://localhost:5147";
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddCors(options =>
 {
+    // Define a CORS policy to allow requests from the client application
     options.AddPolicy("AllowClientApp",
-        builder => builder.WithOrigins(clientUrl)
-                          .AllowAnyMethod()
-                          .AllowAnyHeader());
+        builder => builder.WithOrigins(clientUrl) // Allow requests from the specified client URL
+                          .AllowAnyMethod()       // Allow all HTTP methods (GET, POST, etc.)
+                          .AllowAnyHeader());     // Allow all headers
 });
 
 var app = builder.Build();
 
-// Use CORS policy
+// Use the defined CORS policy
 app.UseCors("AllowClientApp");
 
+// Define a GET endpoint for "/api/products"
 app.MapGet("/api/products", () =>
 {
+    // Return a list of dummy products with associated categories
     return new List<Product>
     {
         new Product { Id = 1, Name = "Laptop", Price = 1200m, Stock = 25, Category = new Category { Id = 101, Name = "Electronics" } },

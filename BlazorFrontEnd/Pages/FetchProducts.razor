@@ -5,92 +5,97 @@
 <h3>Product List</h3>
 
 <ul>
-    @if (products != null)
+    @if (products != null) // Check if the products list is loaded
     {
-        foreach (var product in products)
+        foreach (var product in products) // Iterate through the products list
         {
+            // Display product details including name, price, stock, and category
             <li>@product.Name - $@product.Price (@product.Stock in stock) - Category: @(product.Category?.Name ?? "Unknown")
             </li>
         }
     }
-    else if (errorMessage != null)
+    else if (errorMessage != null) // Check if there is an error message
     {
+        // Display the error message
         <li>@errorMessage</li>
     }
     else
     {
+        // Display a loading message while data is being fetched
         <li>Loading...</li>
     }
 </ul>
 
 @code {
-    private List<Product>? products;
-    private string? errorMessage;
-    private bool debugMode = false; // Set to true for debugging
+    private List<Product>? products; // List to store the fetched products
+    private string? errorMessage; // Variable to store error messages
+    private bool debugMode = false; // Debug mode flag for detailed error messages
 
+    // Lifecycle method that runs when the component is initialized
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            // Create an HttpClient instance with a timeout of 10 seconds
             using var httpClient = new HttpClient
             {
                 Timeout = TimeSpan.FromSeconds(10) // Set a timeout for the request
             };
 
+            // Send a GET request to the API endpoint
             var response = await httpClient.GetAsync("http://localhost:5035/api/products");
 
-            if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode) // Check if the response status is not successful
             {
-                // Handle non-success status codes (e.g., 404, 500)
+                // Log the error and set the error message
                 Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
                 if (debugMode)
                     errorMessage = $"Error: Unable to fetch products (Status Code: {response.StatusCode})";
                 return;
             }
 
+            // Read the response content as a string
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            if (string.IsNullOrWhiteSpace(jsonResponse))
+            if (string.IsNullOrWhiteSpace(jsonResponse)) // Check if the response is empty
             {
-                // Handle empty response
+                // Log the error and set the error message
                 Console.WriteLine("Error: Empty response from the server.");
                 if (debugMode)
                     errorMessage = "Error: Empty response from the server.";
                 return;
             }
 
+            // Deserialize the JSON response into a list of Product objects
             products = JsonSerializer.Deserialize<List<Product>>(jsonResponse, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true // Handle case-insensitive property names
             });
 
-            if (products == null)
+            if (products == null) // Check if the deserialized list is null
             {
-                // Handle the case where the response is empty or null
+                // Log the error and set the error message
                 Console.WriteLine("Error: No products found in the response.");
                 if (debugMode)
                     errorMessage = "Error: No products found in the response.";
                 return;
             }
         }
-        catch (TaskCanceledException)
+        catch (TaskCanceledException) // Handle timeout exceptions
         {
-            // Handle timeout exceptions
             Console.WriteLine("Error: The request timed out.");
             if (debugMode)
                 errorMessage = "Error: The request timed out. Please try again later.";
             return;
         }
-        catch (JsonException)
+        catch (JsonException) // Handle JSON parsing exceptions
         {
-            // Handle JSON parsing exceptions
             Console.WriteLine("Error: Failed to parse the product data.");
             if (debugMode)
                 errorMessage = "Error: Failed to parse the product data.";
             return;
         }
-        catch (Exception ex)
+        catch (Exception ex) // Handle any other exceptions
         {
-            // Handle any other exceptions that may occur
             Console.WriteLine($"Error: An unexpected error occurred - {ex.Message}");
             if (debugMode)
                 errorMessage = $"Error: An unexpected error occurred - {ex.Message}";
