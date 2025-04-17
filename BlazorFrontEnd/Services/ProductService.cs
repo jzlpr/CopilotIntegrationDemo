@@ -19,7 +19,12 @@ public class ProductService
         _httpClient = httpClient;
     }
 
-    // Method to fetch the list of products from the API
+    /// <summary>
+    /// Asynchronously fetches the list of products from the API.
+    /// If the products are already cached, it returns the cached list.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<List<Product>?> GetProductsAsync()
     {
         if (_cachedProducts == null)
