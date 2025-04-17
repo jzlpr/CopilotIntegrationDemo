@@ -133,3 +133,7 @@ CopilotIntegrationDemo.sln
     }
   ]
   ```
+
+## License
+
+This project is licensed under the [MIT License](./LICENCE).
