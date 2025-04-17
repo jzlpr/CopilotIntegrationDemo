@@ -26,80 +26,25 @@
     }
 </ul>
 
+@* Inject the ProductService to fetch products *@
+@inject ProductService ProductService
+
 @code {
     private List<Product>? products; // List to store the fetched products
     private string? errorMessage; // Variable to store error messages
-    private bool debugMode = false; // Debug mode flag for detailed error messages
 
     // Lifecycle method that runs when the component is initialized
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            // Create an HttpClient instance with a timeout of 10 seconds
-            using var httpClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(10) // Set a timeout for the request
-            };
-
-            // Send a GET request to the API endpoint
-            var response = await httpClient.GetAsync("http://localhost:5035/api/products");
-
-            if (!response.IsSuccessStatusCode) // Check if the response status is not successful
-            {
-                // Log the error and set the error message
-                Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
-                if (debugMode)
-                    errorMessage = $"Error: Unable to fetch products (Status Code: {response.StatusCode})";
-                return;
-            }
-
-            // Read the response content as a string
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            if (string.IsNullOrWhiteSpace(jsonResponse)) // Check if the response is empty
-            {
-                // Log the error and set the error message
-                Console.WriteLine("Error: Empty response from the server.");
-                if (debugMode)
-                    errorMessage = "Error: Empty response from the server.";
-                return;
-            }
-
-            // Deserialize the JSON response into a list of Product objects
-            products = JsonSerializer.Deserialize<List<Product>>(jsonResponse, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true // Handle case-insensitive property names
-            });
-
-            if (products == null) // Check if the deserialized list is null
-            {
-                // Log the error and set the error message
-                Console.WriteLine("Error: No products found in the response.");
-                if (debugMode)
-                    errorMessage = "Error: No products found in the response.";
-                return;
-            }
+            // Fetch products using the ProductService
+            products = await ProductService.GetProductsAsync();
         }
-        catch (TaskCanceledException) // Handle timeout exceptions
+        catch (Exception ex)
         {
-            Console.WriteLine("Error: The request timed out.");
-            if (debugMode)
-                errorMessage = "Error: The request timed out. Please try again later.";
-            return;
-        }
-        catch (JsonException) // Handle JSON parsing exceptions
-        {
-            Console.WriteLine("Error: Failed to parse the product data.");
-            if (debugMode)
-                errorMessage = "Error: Failed to parse the product data.";
-            return;
-        }
-        catch (Exception ex) // Handle any other exceptions
-        {
-            Console.WriteLine($"Error: An unexpected error occurred - {ex.Message}");
-            if (debugMode)
-                errorMessage = $"Error: An unexpected error occurred - {ex.Message}";
-            return;
+            errorMessage = $"Error: {ex.Message}";
         }
     }
+
 }
