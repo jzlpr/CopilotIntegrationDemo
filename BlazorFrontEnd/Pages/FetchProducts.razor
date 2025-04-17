@@ -9,7 +9,7 @@
     {
         foreach (var product in products)
         {
-            <li>@product.Name - $@product.Price (@product.Stock in stock) </li>
+            <li>@product.Name - $@product.Price (@product.Stock in stock) - Category: @product.Category.Name </li>
         }
     }
     else if (errorMessage != null)
