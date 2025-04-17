@@ -23,7 +23,7 @@ public class ProductService
     /// Asynchronously fetches the list of products from the API.
     /// If the products are already cached, it returns the cached list.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>_cachedProducts</returns>
     /// <exception cref="Exception"></exception>
     public async Task<List<Product>?> GetProductsAsync()
     {
