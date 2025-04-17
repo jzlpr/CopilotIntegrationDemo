@@ -1,5 +1,7 @@
 # CopilotIntegrationDemo (InventoryHub)
 
+![Built with C#](https://img.shields.io/badge/Built%20with-C%23-blue.svg)
+
 This repository contains a demo project showcasing the integration of a Blazor Frontend with a Minimal API Backend. The project is structured into three main components: `BlazorFrontEnd`, `MinimalAPIBackEnd`, and `Shared`.
 
 ## Project Structure
