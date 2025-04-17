@@ -1,4 +1,4 @@
-# CopilotIntegrationDemo
+# CopilotIntegrationDemo (InventoryHub)
 
 This repository contains a demo project showcasing the integration of a Blazor Frontend with a Minimal API Backend. The project is structured into three main components: `BlazorFrontEnd`, `MinimalAPIBackEnd`, and `Shared`.
 
